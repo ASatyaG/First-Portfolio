@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 
 # 1. Page Configuration
-st.set_page_config(page_title="Atta Satya Girish | Data Engineer", page_icon="⚙️", layout="wide")
+st.set_page_config(page_title="ATTA SATYA GIRISH | Data Engineer", page_icon="⚙️", layout="wide")
 
 # 2. Advanced CSS for Visual Effects & Animations
 st.markdown("""
@@ -22,7 +22,7 @@ st.markdown("""
 
     /* 2. GLOWING TEXT ANIMATION FOR NAME */
     .hero-name {
-        font-size: 100px !important; /* Increased and forced */
+        font-size: 55px !important; /* Increased and forced */
         font-weight: 900;
         background: linear-gradient(90deg, #38bdf8, #818cf8, #38bdf8);
         background-size: 200% auto;
@@ -85,7 +85,7 @@ with st.sidebar:
     st.write("• B.Tech (ECE) - NSRIT") # [cite: 11]
 
 # 4. Hero Section
-st.markdown('<p class="hero-name">Atta Satya Girish</p>', unsafe_allow_html=True) # 
+st.markdown('<p class="hero-name">ATTA SATYA GIRISH</p>', unsafe_allow_html=True) # 
 st.markdown("### **Data Engineer | M.Tech Computer Science**")
 st.write("Developing high-performance data pipelines and evidence-based ML systems.") # [cite: 4, 5]
 
@@ -128,3 +128,4 @@ with st.container():
 
 if st.button("Activate System Check"):
     st.balloons()
+

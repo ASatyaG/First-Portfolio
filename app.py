@@ -6,14 +6,11 @@ from pathlib import Path
 # =========================
 st.set_page_config(page_title="ATTA SATYA GIRISH | Portfolio", page_icon="⚙️", layout="wide")
 
-# ✅ Put your PUBLIC image link here (GitHub RAW link / Imgur / etc.)
-# Example GitHub RAW link format:
-# https://raw.githubusercontent.com/<username>/<repo>/<branch>/<path>/Leaderboard.png
-LEADERBOARD_IMG = "PASTE_YOUR_RAW_GITHUB_IMAGE_LINK_HERE"
-
+# ✅ Public (worldwide) leaderboard image (RAW GitHub file link)
+LEADERBOARD_IMG = "https://raw.githubusercontent.com/ASatyaG/First-Portfolio/main/Leaderboard.png"
 
 # =========================
-# Session State Router
+# Session State Router (Single-file "pages")
 # =========================
 if "page" not in st.session_state:
     st.session_state.page = "home"  # home | anaverse
@@ -23,7 +20,6 @@ def go_home():
 
 def go_anaverse():
     st.session_state.page = "anaverse"
-
 
 # =========================
 # Global CSS (used in both views)
@@ -111,7 +107,6 @@ div.stButton > button:hover {
 </style>
 """, unsafe_allow_html=True)
 
-
 # =========================
 # Sidebar (shown on every page)
 # =========================
@@ -124,7 +119,7 @@ with st.sidebar:
     st.write("---")
     st.markdown("### 🔗 Links")
     st.link_button("GitHub", "https://github.com/ASatyaG")
-    st.link_button("Linkedin", "https://www.linkedin.com/in/atta-satya-girish-089774338/")
+    st.link_button("LinkedIn", "https://www.linkedin.com/in/atta-satya-girish-089774338/")
     st.link_button("Competition Page", "https://www.kaggle.com/competitions/ana-verse-2-0-h/overview")
 
     st.write("---")
@@ -138,27 +133,6 @@ with st.sidebar:
         go_home()
     if st.button("🏆 ANA-Verse Deep Dive"):
         go_anaverse()
-
-
-# =========================
-# Helpers: find local leaderboard image fallback
-# =========================
-def find_first_image_in_folder(folder_name: str):
-    """
-    Looks for the first image file inside the given folder (relative to app.py),
-    supporting common image extensions.
-    """
-    base_dir = Path(__file__).resolve().parent
-    folder = base_dir / folder_name
-    if not folder.exists() or not folder.is_dir():
-        return None
-
-    exts = (".png", ".jpg", ".jpeg", ".webp")
-    for p in sorted(folder.iterdir()):
-        if p.is_file() and p.suffix.lower() in exts:
-            return str(p)
-    return None
-
 
 # =========================
 # PAGE: HOME
@@ -187,7 +161,6 @@ def render_home():
     # Kaggle
     st.write("---")
     st.subheader("🏆 Kaggle")
-
     st.markdown("""
     <div class="project-card">
         <h2 style="color:#38bdf8; margin-top:0;">ANA-Verse 2.0_H — Sensor Anomaly Detection</h2>
@@ -224,7 +197,6 @@ def render_home():
     if st.button("Activate System Check"):
         st.balloons()
 
-
 # =========================
 # PAGE: ANA-VERSE DEEP DIVE
 # =========================
@@ -237,7 +209,7 @@ def render_anaverse():
         st.link_button("Competition Page", "https://www.kaggle.com/competitions/ana-verse-2-0-h/overview")
 
     st.title("🏆 ANA-Verse 2.0_H — Sensor Anomaly Detection (Deep Dive)")
-    st.caption("This page explains the competition, the solution strategy, and shows a leaderboard screenshot.")
+    st.caption("This page explains the competition, the solution strategy, and shows the leaderboard proof image (public).")
 
     st.write("---")
 
@@ -245,7 +217,7 @@ def render_anaverse():
     <div class="project-card">
       <h3 style="margin-top:0; color:#38bdf8;">Competition Objective</h3>
       <p>Predict whether each row of sensor readings corresponds to an anomaly (binary classification).</p>
-      <p class="small-muted"><b>Metric:</b> F1 score is very sensitive to your decision threshold.</p>
+      <p class="small-muted"><b>Metric:</b> F1 Score is very sensitive to thresholding on imbalanced data.</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -255,36 +227,24 @@ def render_anaverse():
       <ul>
         <li><b>Feature engineering:</b> time features + sensor interaction features</li>
         <li><b>Model:</b> LightGBM with class-imbalance handling</li>
-        <li><b>Threshold tuning:</b> optimized cutoff to maximize F1</li>
+        <li><b>Threshold tuning:</b> optimized the decision threshold to maximize leaderboard score</li>
       </ul>
     </div>
     """, unsafe_allow_html=True)
 
     # =========================
-    # Leaderboard image (PUBLIC URL first, fallback to local)
+    # Leaderboard image (PUBLIC via RAW GitHub)
     # =========================
-    st.markdown("### 📸 Leaderboard Screenshot")
-
-    has_public = (LEADERBOARD_IMG.strip() != "" and "PASTE_YOUR_RAW" not in LEADERBOARD_IMG)
-
-    if has_public:
+    st.markdown("### 📸 Leaderboard Screenshot (Public Proof)")
+    if LEADERBOARD_IMG and "raw.githubusercontent.com" in LEADERBOARD_IMG:
         st.image(LEADERBOARD_IMG, caption="Kaggle Leaderboard — ANA-Verse 2.0_H", use_container_width=True)
         st.caption(" ")
     else:
-        # fallback to local folder image (works only on your own PC/server)
-        img_path = find_first_image_in_folder("Kaggle first win")
-        if img_path:
-            st.image(img_path, caption="Kaggle Leaderboard — ANA-Verse 2.0_H", use_container_width=True)
-            st.caption(" ")
-        else:
-            st.warning(
-                "No leaderboard image found.\n\n"
-                "✅ Fix (recommended):\n"
-                "1) Upload the screenshot to a public GitHub repo\n"
-                "2) Copy the RAW link\n"
-                "3) Paste it into LEADERBOARD_IMG at the top of this file\n\n"
-                "Alternative (local only): Put a screenshot inside: 'Kaggle first win/' folder next to app.py."
-            )
+        st.warning(
+            "Leaderboard image link is not set correctly.\n\n"
+            "✅ Fix: Use the RAW GitHub link format:\n"
+            "https://raw.githubusercontent.com/<USER>/<REPO>/main/<FILE>.png"
+        )
 
     st.write("---")
 
@@ -293,23 +253,36 @@ def render_anaverse():
       <h3 style="margin-top:0; color:#38bdf8;">Detailed Approach</h3>
 
       <h4>1) Datetime Feature Engineering</h4>
-      <p>Converted datetime into year/month/day/hour/day-of-week and cyclic sin/cos patterns.</p>
+      <p>Converted datetime into useful parts (month/day/hour/day-of-week) and cyclic encodings (sin/cos) to capture periodic behavior.</p>
 
-      <h4>2) Cleaning + Imputation</h4>
-      <p>Convert to numeric + fill missing values safely (median).</p>
+      <h4>2) Data Cleaning + Imputation</h4>
+      <p>Converted values to numeric and used median imputation for stability.</p>
 
-      <h4>3) Pairwise Sensor Interactions</h4>
-      <p>Created differences, sums, products, ratios between sensors to capture relationships.</p>
+      <h4>3) Sensor Interaction Features</h4>
+      <p>Created features like difference/sum/product/ratio between sensors to reveal relationships.</p>
 
-      <h4>4) Model + Threshold Tuning</h4>
-      <p>LightGBM + class imbalance weighting + selecting the right threshold to maximize F1.</p>
+      <h4>4) Model + Imbalance Handling</h4>
+      <p>Trained LightGBM and handled class imbalance so anomalies get sufficient weight.</p>
+
+      <h4>5) Threshold Tuning</h4>
+      <p>Used threshold selection instead of a fixed 0.5 cutoff to optimize F1 on an imbalanced dataset.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div class="project-card">
+      <h3 style="margin-top:0; color:#38bdf8;">What I Learned</h3>
+      <ul>
+        <li>Thresholding can make or break F1 score</li>
+        <li>Feature engineering often beats “more complex models” on tabular data</li>
+        <li>Handling class imbalance is mandatory</li>
+      </ul>
     </div>
     """, unsafe_allow_html=True)
 
     st.write("---")
     if st.button("⬅️ Back to Portfolio"):
         go_home()
-
 
 # =========================
 # Render Router

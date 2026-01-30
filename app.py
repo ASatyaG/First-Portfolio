@@ -1,14 +1,19 @@
 import streamlit as st
-import os
 from pathlib import Path
 
 # =========================
-# Page Configuration
+# CONFIG
 # =========================
 st.set_page_config(page_title="ATTA SATYA GIRISH | Portfolio", page_icon="⚙️", layout="wide")
 
+# ✅ Put your PUBLIC image link here (GitHub RAW link / Imgur / etc.)
+# Example GitHub RAW link format:
+# https://raw.githubusercontent.com/<username>/<repo>/<branch>/<path>/Leaderboard.png
+LEADERBOARD_IMG = "PASTE_YOUR_RAW_GITHUB_IMAGE_LINK_HERE"
+
+
 # =========================
-# Session State Router (Single-file "pages")
+# Session State Router
 # =========================
 if "page" not in st.session_state:
     st.session_state.page = "home"  # home | anaverse
@@ -18,6 +23,7 @@ def go_home():
 
 def go_anaverse():
     st.session_state.page = "anaverse"
+
 
 # =========================
 # Global CSS (used in both views)
@@ -105,6 +111,7 @@ div.stButton > button:hover {
 </style>
 """, unsafe_allow_html=True)
 
+
 # =========================
 # Sidebar (shown on every page)
 # =========================
@@ -132,8 +139,9 @@ with st.sidebar:
     if st.button("🏆 ANA-Verse Deep Dive"):
         go_anaverse()
 
+
 # =========================
-# Helpers: find leaderboard image
+# Helpers: find local leaderboard image fallback
 # =========================
 def find_first_image_in_folder(folder_name: str):
     """
@@ -150,6 +158,7 @@ def find_first_image_in_folder(folder_name: str):
         if p.is_file() and p.suffix.lower() in exts:
             return str(p)
     return None
+
 
 # =========================
 # PAGE: HOME
@@ -182,7 +191,7 @@ def render_home():
     st.markdown("""
     <div class="project-card">
         <h2 style="color:#38bdf8; margin-top:0;">ANA-Verse 2.0_H — Sensor Anomaly Detection</h2>
-        <p>Predict anomalies from sensor readings (tabular classification). Evaluated using F1 Score + Accuracy per class.</p>
+        <p>Predict anomalies from sensor readings (tabular classification).</p>
         <p class="small-muted"><b>Click below</b> to view the detailed deep dive (problem, approach, results, and proof screenshot).</p>
     </div>
     """, unsafe_allow_html=True)
@@ -215,6 +224,7 @@ def render_home():
     if st.button("Activate System Check"):
         st.balloons()
 
+
 # =========================
 # PAGE: ANA-VERSE DEEP DIVE
 # =========================
@@ -227,7 +237,7 @@ def render_anaverse():
         st.link_button("Competition Page", "https://www.kaggle.com/competitions/ana-verse-2-0-h/overview")
 
     st.title("🏆 ANA-Verse 2.0_H — Sensor Anomaly Detection (Deep Dive)")
-    st.caption("This page explains the competition, the solution strategy, and shows a leaderboard screenshot from your local folder.")
+    st.caption("This page explains the competition, the solution strategy, and shows a leaderboard screenshot.")
 
     st.write("---")
 
@@ -235,7 +245,7 @@ def render_anaverse():
     <div class="project-card">
       <h3 style="margin-top:0; color:#38bdf8;">Competition Objective</h3>
       <p>Predict whether each row of sensor readings corresponds to an anomaly (binary classification).</p>
-      <p class="small-muted"><b>Metric:</b> F1 Score + Accuracy per class (threshold choice impacts F1 strongly).</p>
+      <p class="small-muted"><b>Metric:</b> F1 score is very sensitive to your decision threshold.</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -243,32 +253,38 @@ def render_anaverse():
     <div class="project-card">
       <h3 style="margin-top:0; color:#38bdf8;">How I Achieved #1 (High-Level)</h3>
       <ul>
-        <li><b>Feature engineering:</b> added informative time features + sensor interaction features</li>
-        <li><b>Model:</b> LightGBM with class-imbalance weighting</li>
-        <li><b>Threshold tuning:</b> optimized the decision threshold to maximize F1 score</li>
+        <li><b>Feature engineering:</b> time features + sensor interaction features</li>
+        <li><b>Model:</b> LightGBM with class-imbalance handling</li>
+        <li><b>Threshold tuning:</b> optimized cutoff to maximize F1</li>
       </ul>
-      <p class="small-muted"></p>
     </div>
     """, unsafe_allow_html=True)
 
     # =========================
-    # Leaderboard image (auto-detect inside "Kaggle first win")
+    # Leaderboard image (PUBLIC URL first, fallback to local)
     # =========================
-    st.markdown("### 📸 Leaderboard Screenshot (Local Proof)")
-    img_path = find_first_image_in_folder("Kaggle first win")
+    st.markdown("### 📸 Leaderboard Screenshot")
 
-    if img_path:
-        st.image(img_path, caption="Kaggle Leaderboard — ANA-Verse 2.0_H", use_container_width=True)
+    has_public = (LEADERBOARD_IMG.strip() != "" and "PASTE_YOUR_RAW" not in LEADERBOARD_IMG)
+
+    if has_public:
+        st.image(LEADERBOARD_IMG, caption="Kaggle Leaderboard — ANA-Verse 2.0_H", use_container_width=True)
         st.caption(" ")
     else:
-        st.warning(
-            "I couldn't find an image inside the folder: 'Kaggle first win'.\n\n"
-            "✅ Fix:\n"
-            "1) Put your screenshot (png/jpg/jpeg/webp) inside:\n"
-            "   My Portfolio/Kaggle first win/\n"
-            "2) Restart the app.\n\n"
-            "Tip: Keep the image filename simple (e.g., leaderboard.png)."
-        )
+        # fallback to local folder image (works only on your own PC/server)
+        img_path = find_first_image_in_folder("Kaggle first win")
+        if img_path:
+            st.image(img_path, caption="Kaggle Leaderboard — ANA-Verse 2.0_H", use_container_width=True)
+            st.caption(" ")
+        else:
+            st.warning(
+                "No leaderboard image found.\n\n"
+                "✅ Fix (recommended):\n"
+                "1) Upload the screenshot to a public GitHub repo\n"
+                "2) Copy the RAW link\n"
+                "3) Paste it into LEADERBOARD_IMG at the top of this file\n\n"
+                "Alternative (local only): Put a screenshot inside: 'Kaggle first win/' folder next to app.py."
+            )
 
     st.write("---")
 
@@ -277,37 +293,23 @@ def render_anaverse():
       <h3 style="margin-top:0; color:#38bdf8;">Detailed Approach</h3>
 
       <h4>1) Datetime Feature Engineering</h4>
-      <p>Converted datetime columns into month/day/hour/day-of-week, plus cyclic encodings (sin/cos) to capture periodic sensor behavior.</p>
+      <p>Converted datetime into year/month/day/hour/day-of-week and cyclic sin/cos patterns.</p>
 
-      <h4>2) Data Cleaning + Imputation</h4>
-      <p>Coerced values to numeric and used median imputation to handle missing values robustly.</p>
+      <h4>2) Cleaning + Imputation</h4>
+      <p>Convert to numeric + fill missing values safely (median).</p>
 
-      <h4>3) Pairwise Sensor Interaction Features</h4>
-      <p>Generated features between sensor pairs (difference, sum, product, ratio) to reveal cross-sensor relationships useful for separating normal vs anomaly patterns.</p>
+      <h4>3) Pairwise Sensor Interactions</h4>
+      <p>Created differences, sums, products, ratios between sensors to capture relationships.</p>
 
-      <h4>4) Model</h4>
-      <p>Trained a tuned LightGBM classifier, applying class-imbalance weighting so anomalies are learned effectively.</p>
-
-      <h4>5) Threshold Tuning</h4>
-      <p>Instead of a fixed 0.5 cutoff, selected thresholds using quantiles to control the predicted anomaly count, improving F1 score.</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown("""
-    <div class="project-card">
-      <h3 style="margin-top:0; color:#38bdf8;">What I Learned</h3>
-      <ul>
-        <li>F1 score is very sensitive to the prediction threshold</li>
-        <li>Feature engineering often beats complicated ensembles on tabular problems</li>
-        <li>Tree-based models like LightGBM are strong baselines for sensor/tabular data</li>
-        <li>Class imbalance must be handled explicitly to avoid majority-class bias</li>
-      </ul>
+      <h4>4) Model + Threshold Tuning</h4>
+      <p>LightGBM + class imbalance weighting + selecting the right threshold to maximize F1.</p>
     </div>
     """, unsafe_allow_html=True)
 
     st.write("---")
     if st.button("⬅️ Back to Portfolio"):
         go_home()
+
 
 # =========================
 # Render Router

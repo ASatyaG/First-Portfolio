@@ -235,7 +235,7 @@ def render_anaverse():
     # =========================
     # Leaderboard image (PUBLIC via RAW GitHub)
     # =========================
-    st.markdown("### 📸 Leaderboard Screenshot (Public Proof)")
+    st.markdown("### 📸 Leaderboard Screenshot")
     if LEADERBOARD_IMG and "raw.githubusercontent.com" in LEADERBOARD_IMG:
         st.image(LEADERBOARD_IMG, caption="Kaggle Leaderboard — ANA-Verse 2.0_H", use_container_width=True)
         st.caption(" ")
